@@ -141,11 +141,3 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
-
-# Environment files
-backend/.env
-.env
-
-# Frontend build
-frontend/build
-frontend/node_modules
