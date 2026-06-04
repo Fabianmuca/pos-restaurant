@@ -1,0 +1,114 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import TablesPage from './pages/TablesPage';
+import OrderPage from './pages/OrderPage';
+import MenuPage from './pages/MenuPage';
+import KitchenPage from './pages/KitchenPage';
+import PaymentPage from './pages/PaymentPage';
+import PaymentsPage from './pages/PaymentsPage';
+import './styles/global.css';
+
+function App() {
+  const { token } = useSelector((state) => state.auth);
+
+  return (
+    <Router>
+      {token && <Navbar />}
+      <div className={token ? 'app-content' : 'app-content-auth'}>
+        <Routes>
+          {/* Public */}
+          <Route
+            path="/login"
+            element={token ? <Navigate to="/tables" replace /> : <LoginPage />}
+          />
+
+          {/* Admin-only: register */}
+          <Route
+            path="/register"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <RegisterPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin + Waiter: Tables */}
+          <Route
+            path="/tables"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'waiter']}>
+                <TablesPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin + Waiter: Orders */}
+          <Route
+            path="/orders/:tableId"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'waiter', 'cashier']}>
+                <OrderPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin-only: Menu management */}
+          <Route
+            path="/menu"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <MenuPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin + Waiter: Kitchen view */}
+          <Route
+            path="/kitchen"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'waiter']}>
+                <KitchenPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin + Cashier: Payment processing */}
+          <Route
+            path="/payment/:orderId"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'cashier']}>
+                <PaymentPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin + Cashier: Payments history */}
+          <Route
+            path="/payments"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'cashier']}>
+                <PaymentsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Default redirect */}
+          <Route
+            path="/"
+            element={<Navigate to={token ? '/tables' : '/login'} replace />}
+          />
+          <Route
+            path="*"
+            element={<Navigate to={token ? '/tables' : '/login'} replace />}
+          />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
