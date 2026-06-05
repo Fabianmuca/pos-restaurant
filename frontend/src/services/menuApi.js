@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const menuApi = createApi({
   reducerPath: 'menuApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://URL-E-RENDER.onrender.com/api/menu',
+   baseUrl: 'https://pos-restaurant-backend-c9ow.onrender.com/api/menu',
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
       if (token) {
