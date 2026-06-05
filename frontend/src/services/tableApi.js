@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const tableApi = createApi({
   reducerPath: 'tableApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api/tables',
+    baseUrl: 'https://URL-E-RENDER.onrender.com/api/tables',
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
       if (token) {
