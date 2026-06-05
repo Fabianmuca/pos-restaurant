@@ -10,17 +10,18 @@ import {
 } from '../services/orderApi';
 import OrderItemRow from '../components/OrderItemRow';
 import MenuItemCard from '../components/MenuItemCard';
+import ReceiptPrint from '../components/ReceiptPrint';
 
 const OrderPage = () => {
   const { tableId } = useParams();
-  const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  const navigate    = useNavigate();
+  const { user }    = useSelector((state) => state.auth);
 
-  // Waiter AND cashier AND admin can pay
+  // Të gjithë rolet mund të paguajnë
   const canPay = user?.role === 'admin' || user?.role === 'cashier' || user?.role === 'waiter';
 
-  const { data: table, isLoading: tableLoading } = useGetTableByIdQuery(tableId);
-  const { data: menuItems = [], isLoading: menuLoading } = useGetMenuItemsQuery();
+  const { data: table,         isLoading: tableLoading }  = useGetTableByIdQuery(tableId);
+  const { data: menuItems = [], isLoading: menuLoading }   = useGetMenuItemsQuery();
   const {
     data: existingOrder,
     isLoading: orderLoading,
@@ -30,11 +31,12 @@ const OrderPage = () => {
   const [createOrder, { isLoading: isCreating }] = useCreateOrderMutation();
   const [updateOrder, { isLoading: isUpdating }] = useUpdateOrderMutation();
 
-  const [localItems, setLocalItems] = useState([]);
-  const [menuCategory, setMenuCategory] = useState('all');
-  const [menuSearch, setMenuSearch] = useState('');
-  const [submitError, setSubmitError] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
+  const [localItems,    setLocalItems]    = useState([]);
+  const [menuCategory,  setMenuCategory]  = useState('all');
+  const [menuSearch,    setMenuSearch]    = useState('');
+  const [submitError,   setSubmitError]   = useState('');
+  const [successMsg,    setSuccessMsg]    = useState('');
+  const [showReceipt,   setShowReceipt]   = useState(false);
 
   useEffect(() => {
     if (existingOrder && existingOrder.items) {
@@ -42,7 +44,7 @@ const OrderPage = () => {
         existingOrder.items.map((item) => ({
           menuItem: item.menuItem,
           quantity: item.quantity,
-          note: item.note || '',
+          note:     item.note || '',
         }))
       );
     } else if (!orderLoading) {
@@ -55,9 +57,7 @@ const OrderPage = () => {
       const existing = prev.find((i) => i.menuItem._id === menuItem._id);
       if (existing) {
         return prev.map((i) =>
-          i.menuItem._id === menuItem._id
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
+          i.menuItem._id === menuItem._id ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
       return [...prev, { menuItem, quantity: 1, note: '' }];
@@ -87,11 +87,10 @@ const OrderPage = () => {
     );
   };
 
-  const calculateTotal = () => {
-    return localItems
+  const calculateTotal = () =>
+    localItems
       .reduce((sum, item) => sum + (item.menuItem?.price || 0) * item.quantity, 0)
       .toFixed(2);
-  };
 
   const handleSubmitOrder = async () => {
     if (localItems.length === 0) {
@@ -104,7 +103,7 @@ const OrderPage = () => {
       items: localItems.map((i) => ({
         menuItem: i.menuItem._id,
         quantity: i.quantity,
-        note: i.note,
+        note:     i.note,
       })),
     };
 
@@ -124,13 +123,11 @@ const OrderPage = () => {
   };
 
   const handleGoToPayment = () => {
-    if (existingOrder) {
-      navigate(`/payment/${existingOrder._id}`);
-    }
+    if (existingOrder) navigate(`/payment/${existingOrder._id}`);
   };
 
   const filteredMenu = menuItems.filter((item) => {
-    const matchCat = menuCategory === 'all' || item.category === menuCategory;
+    const matchCat    = menuCategory === 'all' || item.category === menuCategory;
     const matchSearch = item.name.toLowerCase().includes(menuSearch.toLowerCase());
     return matchCat && matchSearch && item.isAvailable;
   });
@@ -169,6 +166,7 @@ const OrderPage = () => {
 
       {!isLoading && (
         <div className="order-layout">
+          {/* ── Paneli i porosisë ── */}
           <div className="order-panel">
             <div className="panel-header">
               <h2 className="panel-title">
@@ -176,17 +174,13 @@ const OrderPage = () => {
               </h2>
               {existingOrder && (
                 <span className={`order-status-badge status-${existingOrder.status}`}>
-                  {
-                    { pending: 'Në pritje', preparing: 'Duke u pergatitur', ready: 'Gati', paid: 'Paguar' }[
-                      existingOrder.status
-                    ]
-                  }
+                  {{ pending: 'Në pritje', preparing: 'Duke u pergatitur', ready: 'Gati', paid: 'Paguar' }[existingOrder.status]}
                 </span>
               )}
             </div>
 
             {submitError && <div className="alert alert-error">{submitError}</div>}
-            {successMsg && <div className="alert alert-success">{successMsg}</div>}
+            {successMsg  && <div className="alert alert-success">{successMsg}</div>}
 
             {localItems.length === 0 ? (
               <div className="empty-state">
@@ -213,6 +207,7 @@ const OrderPage = () => {
               <span className="total-amount">{calculateTotal()} L</span>
             </div>
 
+            {/* Dërgo / Përditëso */}
             <button
               className="btn-primary btn-full"
               onClick={handleSubmitOrder}
@@ -229,6 +224,18 @@ const OrderPage = () => {
               )}
             </button>
 
+            {/* Printo Faturën — i disponueshëm për të gjithë nëse ekziston porosia */}
+            {existingOrder && (
+              <button
+                className="btn-receipt btn-full"
+                style={{ marginTop: 10 }}
+                onClick={() => setShowReceipt(true)}
+              >
+                🧾 Printo Faturën
+              </button>
+            )}
+
+            {/* Paguaj */}
             {existingOrder && canPay && (
               <button
                 className="btn-payment btn-full"
@@ -240,6 +247,7 @@ const OrderPage = () => {
             )}
           </div>
 
+          {/* ── Browser menuje ── */}
           <div className="menu-browser-panel">
             <div className="panel-header">
               <h2 className="panel-title">Menuja</h2>
@@ -255,9 +263,9 @@ const OrderPage = () => {
               />
               <div className="filter-tabs">
                 {[
-                  { key: 'all', label: 'Të gjitha' },
-                  { key: 'food', label: '🍽️ Ushqim' },
-                  { key: 'drink', label: '🍹 Pije' },
+                  { key: 'all',     label: 'Të gjitha' },
+                  { key: 'food',    label: '🍽️ Ushqim' },
+                  { key: 'drink',   label: '🍹 Pije' },
                   { key: 'dessert', label: '🍰 Ëmbëlsirë' },
                 ].map((tab) => (
                   <button
@@ -288,6 +296,14 @@ const OrderPage = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── Modal Faturë ── */}
+      {showReceipt && existingOrder && (
+        <ReceiptPrint
+          order={existingOrder}
+          onClose={() => setShowReceipt(false)}
+        />
       )}
     </div>
   );

@@ -3,17 +3,24 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useGetOrderByIdQuery } from '../services/orderApi';
 import { useCreatePaymentMutation } from '../services/paymentApi';
 import OrderItemRow from '../components/OrderItemRow';
+import ReceiptPrint from '../components/ReceiptPrint';
 
 const PaymentPage = () => {
   const { orderId } = useParams();
-  const navigate = useNavigate();
+  const navigate    = useNavigate();
 
   const { data: order, isLoading, isError } = useGetOrderByIdQuery(orderId);
   const [createPayment, { isLoading: isPaying }] = useCreatePaymentMutation();
 
   const [paymentMethod, setPaymentMethod] = useState('cash');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [error,         setError]         = useState('');
+  const [success,       setSuccess]       = useState(false);
+  const [showReceipt,   setShowReceipt]   = useState(false);
+
+  // Ndërtojmë objektin e porosisë me metodën e pagesës për faturën
+  const orderWithMethod = order
+    ? { ...order, paymentMethod }
+    : null;
 
   const handlePayment = async () => {
     if (!order) return;
@@ -24,7 +31,7 @@ const PaymentPage = () => {
     setError('');
     try {
       await createPayment({
-        order: orderId,
+        order:  orderId,
         method: paymentMethod,
         amount: order.totalPrice,
       }).unwrap();
@@ -34,6 +41,7 @@ const PaymentPage = () => {
     }
   };
 
+  /* ── Loading ── */
   if (isLoading) {
     return (
       <div className="page-container">
@@ -45,6 +53,7 @@ const PaymentPage = () => {
     );
   }
 
+  /* ── Error ── */
   if (isError || !order) {
     return (
       <div className="page-container">
@@ -56,6 +65,7 @@ const PaymentPage = () => {
     );
   }
 
+  /* ── Sukses pagesë ── */
   if (success) {
     return (
       <div className="page-container">
@@ -75,18 +85,37 @@ const PaymentPage = () => {
               <strong>{paymentMethod === 'cash' ? '💵 Cash' : '💳 Kartë'}</strong>
             </div>
           </div>
+
+          {/* Printo faturën pas pagesës */}
+          <button
+            className="btn-receipt"
+            style={{ marginTop: 24, width: '100%' }}
+            onClick={() => setShowReceipt(true)}
+          >
+            🧾 Printo Faturën
+          </button>
+
           <button
             className="btn-primary"
             onClick={() => navigate('/tables')}
-            style={{ marginTop: 24 }}
+            style={{ marginTop: 12, width: '100%' }}
           >
             🪑 Kthehu te Tavolinat
           </button>
         </div>
+
+        {/* Modal faturë */}
+        {showReceipt && (
+          <ReceiptPrint
+            order={orderWithMethod}
+            onClose={() => setShowReceipt(false)}
+          />
+        )}
       </div>
     );
   }
 
+  /* ── Forma e pagesës ── */
   return (
     <div className="page-container">
       <div className="page-header">
@@ -97,6 +126,13 @@ const PaymentPage = () => {
           <h1 className="page-title">Pagesa</h1>
           <p className="page-subtitle">Tavolina #{order.table?.number}</p>
         </div>
+        {/* Printo faturën edhe para pagesës */}
+        <button
+          className="btn-receipt"
+          onClick={() => setShowReceipt(true)}
+        >
+          🧾 Printo Faturën
+        </button>
       </div>
 
       {order.status === 'paid' && (
@@ -106,6 +142,7 @@ const PaymentPage = () => {
       )}
 
       <div className="payment-layout">
+        {/* ── Detajet e porosisë ── */}
         <div className="payment-summary-panel">
           <h2 className="panel-title">Detajet e Porosisë</h2>
 
@@ -116,24 +153,13 @@ const PaymentPage = () => {
           <div className="payment-info-row">
             <span>Statusi:</span>
             <span className={`order-status-badge status-${order.status}`}>
-              {
-                {
-                  pending: 'Në pritje',
-                  preparing: 'Duke u përgatitur',
-                  ready: 'Gati',
-                  paid: 'Paguar',
-                }[order.status]
-              }
+              {{ pending: 'Në pritje', preparing: 'Duke u përgatitur', ready: 'Gati', paid: 'Paguar' }[order.status]}
             </span>
           </div>
 
           <div className="order-items-list" style={{ marginTop: 16 }}>
             {order.items.map((item, idx) => (
-              <OrderItemRow
-                key={idx}
-                item={item}
-                readonly={true}
-              />
+              <OrderItemRow key={idx} item={item} readonly={true} />
             ))}
           </div>
 
@@ -143,6 +169,7 @@ const PaymentPage = () => {
           </div>
         </div>
 
+        {/* ── Metoda & konfirmim ── */}
         {order.status !== 'paid' && (
           <div className="payment-action-panel">
             <h2 className="panel-title">Metoda e Pagesës</h2>
@@ -168,9 +195,7 @@ const PaymentPage = () => {
 
             <div className="payment-total-display">
               <span className="payment-total-label">Shuma për t'u paguar</span>
-              <span className="payment-total-amount">
-                {order.totalPrice.toFixed(2)} L
-              </span>
+              <span className="payment-total-amount">{order.totalPrice.toFixed(2)} L</span>
             </div>
 
             <button
@@ -189,6 +214,14 @@ const PaymentPage = () => {
           </div>
         )}
       </div>
+
+      {/* Modal faturë */}
+      {showReceipt && (
+        <ReceiptPrint
+          order={orderWithMethod}
+          onClose={() => setShowReceipt(false)}
+        />
+      )}
     </div>
   );
 };

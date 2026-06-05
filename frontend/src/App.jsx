@@ -10,6 +10,7 @@ import MenuPage from './pages/MenuPage';
 import KitchenPage from './pages/KitchenPage';
 import PaymentPage from './pages/PaymentPage';
 import PaymentsPage from './pages/PaymentsPage';
+import AboutPage from './pages/AboutPage';
 import './styles/global.css';
 
 function App() {
@@ -43,7 +44,6 @@ function App() {
             }
           />
 
-          {/* Waiter can now access orders AND payment */}
           <Route
             path="/orders/:tableId"
             element={
@@ -71,7 +71,6 @@ function App() {
             }
           />
 
-          {/* Waiter can now pay */}
           <Route
             path="/payment/:orderId"
             element={
@@ -86,6 +85,16 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['admin', 'cashier']}>
                 <PaymentsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Rreth Nesh — i aksesueshëm nga të gjithë rolet */}
+          <Route
+            path="/about"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'waiter', 'cashier']}>
+                <AboutPage />
               </ProtectedRoute>
             }
           />

@@ -3,10 +3,10 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { logout } from '../features/auth/authSlice';
 
 const Navbar = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { user } = useSelector((state) => state.auth);
+  const dispatch  = useDispatch();
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const { user }  = useSelector((state) => state.auth);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -16,12 +16,12 @@ const Navbar = () => {
   const isActive = (path) => location.pathname.startsWith(path);
 
   const roleColors = {
-    admin: '#e74c3c',
-    waiter: '#2ecc71',
+    admin:   '#e74c3c',
+    waiter:  '#2ecc71',
     cashier: '#f39c12',
   };
 
-  const roleColor = user ? roleColors[user.role] || '#95a5a6' : '#95a5a6';
+  const roleColor = user ? (roleColors[user.role] || '#95a5a6') : '#95a5a6';
 
   return (
     <nav className="navbar">
@@ -31,55 +31,47 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-links">
-        {/* Waiter & Admin: Tables */}
+
+        {/* Admin & Waiter: Tavolinat */}
         {(user?.role === 'admin' || user?.role === 'waiter') && (
-          <Link
-            to="/tables"
-            className={`nav-link ${isActive('/tables') ? 'active' : ''}`}
-          >
+          <Link to="/tables" className={`nav-link ${isActive('/tables') ? 'active' : ''}`}>
             <span className="nav-icon">🪑</span> Tavolinat
           </Link>
         )}
 
-        {/* Waiter & Admin: Kitchen */}
+        {/* Admin & Waiter: Kuzhina */}
         {(user?.role === 'admin' || user?.role === 'waiter') && (
-          <Link
-            to="/kitchen"
-            className={`nav-link ${isActive('/kitchen') ? 'active' : ''}`}
-          >
+          <Link to="/kitchen" className={`nav-link ${isActive('/kitchen') ? 'active' : ''}`}>
             <span className="nav-icon">👨‍🍳</span> Kuzhina
           </Link>
         )}
 
-        {/* Admin: Menu */}
+        {/* Admin: Menuja */}
         {user?.role === 'admin' && (
-          <Link
-            to="/menu"
-            className={`nav-link ${isActive('/menu') ? 'active' : ''}`}
-          >
+          <Link to="/menu" className={`nav-link ${isActive('/menu') ? 'active' : ''}`}>
             <span className="nav-icon">📋</span> Menuja
           </Link>
         )}
 
-        {/* Cashier & Admin: Payments */}
+        {/* Admin & Cashier: Pagesat */}
         {(user?.role === 'admin' || user?.role === 'cashier') && (
-          <Link
-            to="/payments"
-            className={`nav-link ${isActive('/payments') ? 'active' : ''}`}
-          >
+          <Link to="/payments" className={`nav-link ${isActive('/payments') ? 'active' : ''}`}>
             <span className="nav-icon">💳</span> Pagesat
           </Link>
         )}
 
-        {/* Admin: Register */}
+        {/* Admin: Regjistro */}
         {user?.role === 'admin' && (
-          <Link
-            to="/register"
-            className={`nav-link ${isActive('/register') ? 'active' : ''}`}
-          >
+          <Link to="/register" className={`nav-link ${isActive('/register') ? 'active' : ''}`}>
             <span className="nav-icon">👤</span> Regjistro
           </Link>
         )}
+
+        {/* Të gjithë: Rreth Nesh */}
+        <Link to="/about" className={`nav-link ${isActive('/about') ? 'active' : ''}`}>
+          <span className="nav-icon">ℹ️</span> Rreth Nesh
+        </Link>
+
       </div>
 
       <div className="navbar-user">

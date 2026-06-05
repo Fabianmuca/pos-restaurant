@@ -1509,3 +1509,330 @@ body {
   line-height: 1.5;
 }
 .reserve-info strong { color: var(--yellow); }
+
+
+/* ============================================================
+   About Page
+   ============================================================ */
+
+.about-page {
+  min-height: 100vh;
+}
+
+.about-hero {
+  position: relative;
+  height: 420px;
+  background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1400&q=80');
+  background-size: cover;
+  background-position: center 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.about-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 17, 23, 0.85) 0%,
+    rgba(201, 146, 58, 0.15) 100%
+  );
+}
+
+.about-hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.about-hero-tag {
+  display: inline-block;
+  background: var(--accent-dim);
+  border: 1px solid var(--border-accent);
+  color: var(--accent-light);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 18px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+
+.about-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: 16px;
+  text-shadow: 0 4px 32px rgba(0,0,0,0.7);
+}
+
+.about-hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Body */
+.about-body { padding-bottom: 80px; }
+
+.about-section { padding: 64px 24px; }
+
+.about-section:nth-child(even) { background: var(--bg-surface); }
+
+.about-section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.about-section-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+.about-center { text-align: center; margin-bottom: 40px; }
+
+.about-desc {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
+/* Intro grid */
+.about-intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .about-intro-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
+/* Stats */
+.about-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.about-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  text-align: center;
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+.about-stat-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+}
+
+.about-stat-num {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.about-stat-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Features */
+.about-features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 900px) { .about-features-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 600px) { .about-features-grid { grid-template-columns: 1fr; } }
+
+.about-feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.about-feature-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(201,146,58,0.1);
+}
+
+.about-feature-icon { font-size: 2rem; display: block; margin-bottom: 12px; }
+
+.about-feature-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.about-feature-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Contact */
+.about-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 64px;
+  align-items: start;
+}
+
+@media (max-width: 768px) { .about-contact-grid { grid-template-columns: 1fr; } }
+
+.about-contact-list { display: flex; flex-direction: column; gap: 20px; }
+
+.about-contact-item { display: flex; align-items: flex-start; gap: 16px; }
+
+.about-contact-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+
+.about-contact-item strong {
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.about-contact-item p { color: var(--text-secondary); font-size: 0.95rem; }
+
+.about-map-placeholder {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.about-map-icon { font-size: 3rem; display: block; }
+
+/* ============================================================
+   Receipt / Fatura POS
+   ============================================================ */
+
+.receipt-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+}
+
+.receipt-modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  max-width: 380px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.receipt-preview-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.receipt-paper {
+  background: #ffffff;
+  color: #000000;
+  width: 280px;
+  padding: 12px 10px;
+  font-family: 'Courier New', 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  border-radius: 4px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+
+.receipt-solid {
+  border: none;
+  border-top: 1px solid #000000;
+  margin: 6px 0;
+}
+
+.receipt-dash {
+  border: none;
+  border-top: 1px dashed #666666;
+  margin: 6px 0;
+}
+
+.receipt-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.receipt-actions .btn-secondary,
+.receipt-actions .btn-primary {
+  flex: 1;
+}
+
+/* Butoni Printo Faturën */
+.btn-receipt {
+  padding: 10px 22px;
+  background: var(--bg-card);
+  color: var(--accent);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-receipt:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.btn-receipt.btn-full { width: 100%; }
