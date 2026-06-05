@@ -106,7 +106,6 @@ const PaymentPage = () => {
       )}
 
       <div className="payment-layout">
-        {/* Order Summary */}
         <div className="payment-summary-panel">
           <h2 className="panel-title">Detajet e Porosisë</h2>
 
@@ -116,9 +115,7 @@ const PaymentPage = () => {
           </div>
           <div className="payment-info-row">
             <span>Statusi:</span>
-            <span
-              className={`order-status-badge status-${order.status}`}
-            >
+            <span className={`order-status-badge status-${order.status}`}>
               {
                 {
                   pending: 'Në pritje',
@@ -146,7 +143,6 @@ const PaymentPage = () => {
           </div>
         </div>
 
-        {/* Payment Panel */}
         {order.status !== 'paid' && (
           <div className="payment-action-panel">
             <h2 className="panel-title">Metoda e Pagesës</h2>

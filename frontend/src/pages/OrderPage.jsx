@@ -16,13 +16,16 @@ const OrderPage = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
+  // Waiter AND cashier AND admin can pay
+  const canPay = user?.role === 'admin' || user?.role === 'cashier' || user?.role === 'waiter';
+
   const { data: table, isLoading: tableLoading } = useGetTableByIdQuery(tableId);
   const { data: menuItems = [], isLoading: menuLoading } = useGetMenuItemsQuery();
   const {
     data: existingOrder,
     isLoading: orderLoading,
     refetch: refetchOrder,
-  } = useGetOrderByTableQuery(tableId);
+  } = useGetOrderByTableQuery(tableId, { pollingInterval: 10000 });
 
   const [createOrder, { isLoading: isCreating }] = useCreateOrderMutation();
   const [updateOrder, { isLoading: isUpdating }] = useUpdateOrderMutation();
@@ -33,7 +36,6 @@ const OrderPage = () => {
   const [submitError, setSubmitError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
-  // Sync existing order items to local state
   useEffect(() => {
     if (existingOrder && existingOrder.items) {
       setLocalItems(
@@ -151,7 +153,7 @@ const OrderPage = () => {
             </p>
           )}
         </div>
-        {existingOrder && (user?.role === 'admin' || user?.role === 'cashier') && (
+        {existingOrder && canPay && (
           <button className="btn-payment" onClick={handleGoToPayment}>
             💳 Paguaj Porosinë
           </button>
@@ -167,7 +169,6 @@ const OrderPage = () => {
 
       {!isLoading && (
         <div className="order-layout">
-          {/* Left: Current Order */}
           <div className="order-panel">
             <div className="panel-header">
               <h2 className="panel-title">
@@ -227,9 +228,18 @@ const OrderPage = () => {
                 '✅ Dërgo Porosinë'
               )}
             </button>
+
+            {existingOrder && canPay && (
+              <button
+                className="btn-payment btn-full"
+                style={{ marginTop: 10 }}
+                onClick={handleGoToPayment}
+              >
+                💳 Paguaj Porosinë — {existingOrder.totalPrice?.toFixed(2)} L
+              </button>
+            )}
           </div>
 
-          {/* Right: Menu Browser */}
           <div className="menu-browser-panel">
             <div className="panel-header">
               <h2 className="panel-title">Menuja</h2>

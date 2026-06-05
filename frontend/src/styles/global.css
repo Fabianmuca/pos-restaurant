@@ -1444,3 +1444,68 @@ body {
   .page-title { font-size: 1.5rem; }
   .kitchen-legend { display: none; }
 }
+
+/* ── Auto-refresh badge ───────────────────────────────────── */
+.auto-refresh-badge {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+/* ── Table reserved styles ────────────────────────────────── */
+.table-card-reserved {
+  opacity: 0.75;
+}
+
+.reserved-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--yellow);
+  text-align: center;
+  padding: 4px 0;
+  margin-top: 4px;
+}
+
+.btn-reserve-icon {
+  font-size: 0.85rem;
+}
+
+.btn-cancel-reserve {
+  font-size: 0.85rem;
+}
+
+/* ── Reserve button in modal ──────────────────────────────── */
+.btn-reserve {
+  padding: 10px 22px;
+  background: var(--yellow);
+  color: #0f1117;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.btn-reserve:hover:not(:disabled) {
+  background: #f5a623;
+  transform: translateY(-1px);
+}
+.btn-reserve:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.reserve-info {
+  font-size: 0.825rem;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.reserve-info strong { color: var(--yellow); }

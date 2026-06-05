@@ -15,8 +15,12 @@ const TablesPage = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const isAdmin = user?.role === 'admin';
+  const isWaiter = user?.role === 'waiter';
 
-  const { data: tables = [], isLoading, isError } = useGetTablesQuery();
+  // Auto-refresh every 10 seconds
+  const { data: tables = [], isLoading, isError } = useGetTablesQuery(undefined, {
+    pollingInterval: 10000,
+  });
   const [createTable, { isLoading: isCreating }] = useCreateTableMutation();
   const [updateTable, { isLoading: isUpdating }] = useUpdateTableMutation();
   const [deleteTable] = useDeleteTableMutation();
@@ -26,6 +30,12 @@ const TablesPage = () => {
   const [form, setForm] = useState(INITIAL_FORM);
   const [formError, setFormError] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+
+  // Reserve modal
+  const [showReserveModal, setShowReserveModal] = useState(false);
+  const [reservingTable, setReservingTable] = useState(null);
+  const [reserveName, setReserveName] = useState('');
+  const [reserveError, setReserveError] = useState('');
 
   const openCreate = () => {
     setEditingTable(null);
@@ -46,6 +56,44 @@ const TablesPage = () => {
     setEditingTable(null);
     setForm(INITIAL_FORM);
     setFormError('');
+  };
+
+  const openReserve = (table) => {
+    setReservingTable(table);
+    setReserveName('');
+    setReserveError('');
+    setShowReserveModal(true);
+  };
+
+  const closeReserve = () => {
+    setShowReserveModal(false);
+    setReservingTable(null);
+    setReserveName('');
+    setReserveError('');
+  };
+
+  const handleReserve = async (e) => {
+    e.preventDefault();
+    if (!reserveName.trim()) {
+      setReserveError('Ju lutem shkruani emrin e klientit.');
+      return;
+    }
+    try {
+      await updateTable({ id: reservingTable._id, status: 'reserved' }).unwrap();
+      closeReserve();
+    } catch (err) {
+      setReserveError(err?.data?.message || 'Gabim gjatë rezervimit.');
+    }
+  };
+
+  const handleCancelReservation = async (table) => {
+    if (window.confirm(`Anulo rezervimin e Tavolinës #${table.number}?`)) {
+      try {
+        await updateTable({ id: table._id, status: 'free' }).unwrap();
+      } catch (err) {
+        alert(err?.data?.message || 'Gabim.');
+      }
+    }
   };
 
   const handleFormChange = (e) => {
@@ -87,6 +135,7 @@ const TablesPage = () => {
   };
 
   const handleTableClick = (table) => {
+    if (table.status === 'reserved') return;
     navigate(`/orders/${table._id}`);
   };
 
@@ -108,6 +157,7 @@ const TablesPage = () => {
           <h1 className="page-title">Tavolinat</h1>
           <p className="page-subtitle">
             {counts.free} lirë · {counts.occupied} zënë · {counts.reserved} rezervuar
+            <span className="auto-refresh-badge">🔄 auto-refresh 10s</span>
           </p>
         </div>
         {isAdmin && (
@@ -117,7 +167,6 @@ const TablesPage = () => {
         )}
       </div>
 
-      {/* Filter tabs */}
       <div className="filter-tabs">
         {[
           { key: 'all', label: `Të gjitha (${counts.all})` },
@@ -166,12 +215,15 @@ const TablesPage = () => {
             onClick={handleTableClick}
             onEdit={openEdit}
             onDelete={handleDelete}
+            onReserve={openReserve}
+            onCancelReservation={handleCancelReservation}
             isAdmin={isAdmin}
+            isWaiter={isWaiter}
           />
         ))}
       </div>
 
-      {/* Modal */}
+      {/* Add/Edit Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -242,6 +294,53 @@ const TablesPage = () => {
                     </span>
                   ) : (
                     editingTable ? 'Ruaj Ndryshimet' : 'Krijo Tavolinën'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Reserve Modal */}
+      {showReserveModal && (
+        <div className="modal-overlay" onClick={closeReserve}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">
+                🔖 Rezervo Tavolinën #{reservingTable?.number}
+              </h2>
+              <button className="modal-close" onClick={closeReserve}>✕</button>
+            </div>
+
+            {reserveError && <div className="alert alert-error">{reserveError}</div>}
+
+            <form onSubmit={handleReserve}>
+              <div className="form-group">
+                <label className="form-label">Emri i klientit</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="p.sh. Artan Hoxha"
+                  value={reserveName}
+                  onChange={(e) => setReserveName(e.target.value)}
+                  autoFocus
+                />
+              </div>
+
+              <p className="reserve-info">
+                Tavolina do të shënohet si <strong>e rezervuar</strong> dhe nuk do të jetë e aksesueshme nga kamarierët.
+              </p>
+
+              <div className="form-actions">
+                <button type="button" className="btn-secondary" onClick={closeReserve}>
+                  Anulo
+                </button>
+                <button type="submit" className="btn-reserve" disabled={isUpdating}>
+                  {isUpdating ? (
+                    <span className="btn-loading"><span className="spinner"></span> Duke rezervuar...</span>
+                  ) : (
+                    '🔖 Konfirmo Rezervimin'
                   )}
                 </button>
               </div>

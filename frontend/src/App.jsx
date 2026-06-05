@@ -20,13 +20,11 @@ function App() {
       {token && <Navbar />}
       <div className={token ? 'app-content' : 'app-content-auth'}>
         <Routes>
-          {/* Public */}
           <Route
             path="/login"
             element={token ? <Navigate to="/tables" replace /> : <LoginPage />}
           />
 
-          {/* Admin-only: register */}
           <Route
             path="/register"
             element={
@@ -36,7 +34,6 @@ function App() {
             }
           />
 
-          {/* Admin + Waiter: Tables */}
           <Route
             path="/tables"
             element={
@@ -46,7 +43,7 @@ function App() {
             }
           />
 
-          {/* Admin + Waiter: Orders */}
+          {/* Waiter can now access orders AND payment */}
           <Route
             path="/orders/:tableId"
             element={
@@ -56,7 +53,6 @@ function App() {
             }
           />
 
-          {/* Admin-only: Menu management */}
           <Route
             path="/menu"
             element={
@@ -66,7 +62,6 @@ function App() {
             }
           />
 
-          {/* Admin + Waiter: Kitchen view */}
           <Route
             path="/kitchen"
             element={
@@ -76,17 +71,16 @@ function App() {
             }
           />
 
-          {/* Admin + Cashier: Payment processing */}
+          {/* Waiter can now pay */}
           <Route
             path="/payment/:orderId"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'cashier']}>
+              <ProtectedRoute allowedRoles={['admin', 'cashier', 'waiter']}>
                 <PaymentPage />
               </ProtectedRoute>
             }
           />
 
-          {/* Admin + Cashier: Payments history */}
           <Route
             path="/payments"
             element={
@@ -96,7 +90,6 @@ function App() {
             }
           />
 
-          {/* Default redirect */}
           <Route
             path="/"
             element={<Navigate to={token ? '/tables' : '/login'} replace />}
