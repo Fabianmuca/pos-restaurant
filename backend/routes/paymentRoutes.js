@@ -11,7 +11,7 @@ const { protect }        = require('../middleware/authMiddleware');
 const { authorizeRoles } = require('../middleware/roleMiddleware');
 
 router.use(protect);
-router.use(authorizeRoles('admin', 'cashier'));
+router.use(authorizeRoles('admin', 'cashier', 'waiter'));
 
 router.get('/',    getPayments);
 router.get('/:id', getPaymentById);
