@@ -157,7 +157,7 @@ const TablesPage = () => {
           <h1 className="page-title">Tavolinat</h1>
           <p className="page-subtitle">
             {counts.free} lirë · {counts.occupied} zënë · {counts.reserved} rezervuar
-            <span className="auto-refresh-badge">🔄 auto-refresh 10s</span>
+            <span className="auto-refresh-badge">🔄 auto-refresh 3s</span>
           </p>
         </div>
         {isAdmin && (
