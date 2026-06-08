@@ -19,7 +19,7 @@ const TablesPage = () => {
 
   // Auto-refresh every 10 seconds
   const { data: tables = [], isLoading, isError } = useGetTablesQuery(undefined, {
-    pollingInterval: 10000,
+    pollingInterval: 3000,
   });
   const [createTable, { isLoading: isCreating }] = useCreateTableMutation();
   const [updateTable, { isLoading: isUpdating }] = useUpdateTableMutation();

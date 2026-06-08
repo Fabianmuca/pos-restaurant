@@ -26,7 +26,7 @@ const OrderPage = () => {
     data: existingOrder,
     isLoading: orderLoading,
     refetch: refetchOrder,
-  } = useGetOrderByTableQuery(tableId, { pollingInterval: 10000 });
+  } = useGetOrderByTableQuery(tableId, { pollingInterval: 3000 });
 
   const [createOrder, { isLoading: isCreating }] = useCreateOrderMutation();
   const [updateOrder, { isLoading: isUpdating }] = useUpdateOrderMutation();
