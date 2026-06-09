@@ -3,7 +3,7 @@
 Sistem i plotë i menaxhimit të pikës së shitjes (Point of Sale) për bar-restorantet.
 
 ## 🚀 Live Demo
-- **Frontend:** https://pos-restaurant.vercel.app
+- **Frontend:** https://pos-restaurant-zeta.vercel.app/
 - **Backend:** https://pos-restaurant-backend-c9ow.onrender.com
 
 ## ✨ Funksionalitetet
